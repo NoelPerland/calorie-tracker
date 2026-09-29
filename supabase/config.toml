@@ -1,0 +1,5 @@
+project_id = "calorie-tracker"
+
+[functions.add-food]
+# The handler validates the user's JWT with Auth, supporting current signing keys.
+verify_jwt = false
