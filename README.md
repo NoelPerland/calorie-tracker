@@ -4,7 +4,7 @@ A small React + TypeScript nutrition tracker. Vite, Tailwind CSS, Supabase Auth/
 
 ## 1. Create Supabase
 
-Create a project named **calorie-tracker** at [Supabase](https://supabase.com/dashboard). In Project Settings → API, copy the project URL and **anon (public) key**. The app requires email/password authentication (enabled in Authentication → Providers). Keep email confirmation enabled; configure your SMTP provider for production email delivery.
+The Supabase project **calorie-tracker** is connected at `https://wjwzxgtrccjnfvkjaiyr.supabase.co`. The app requires email/password authentication. Email confirmation remains enabled.
 
 In Authentication → URL Configuration, set the Site URL to `https://NoelPerland.github.io/calorie-tracker/`. Add that exact URL and `http://localhost:5173/calorie-tracker/` (or `http://127.0.0.1:5173/calorie-tracker/`) as allowed redirect URLs. After confirming their email, users sign in and arrive directly on Today.
 
@@ -27,7 +27,7 @@ Alternatively, with the Supabase CLI:
 
 ```sh
 npx supabase login
-npx supabase link --project-ref YOUR_PROJECT_REF
+npx supabase link --project-ref wjwzxgtrccjnfvkjaiyr
 npx supabase db push
 ```
 
@@ -62,14 +62,14 @@ The result is `https://NoelPerland.github.io/calorie-tracker/`. `vite.config.ts`
 GitHub Pages hosts only the frontend. Deploy the database and Edge Function to Supabase separately:
 
 ```sh
-npx supabase functions deploy add-food --project-ref YOUR_PROJECT_REF
+npx supabase functions deploy add-food --project-ref wjwzxgtrccjnfvkjaiyr
 ```
 
 `SUPABASE_URL` and `SUPABASE_ANON_KEY` are supplied to hosted Edge Functions by Supabase. No privileged service key is used. The function has gateway JWT verification disabled because it verifies the bearer token itself with `auth.getUser()` and forwards that user token to the database for RLS enforcement.
 
 ## 6. Future ChatGPT integration
 
-`POST https://YOUR_PROJECT.supabase.co/functions/v1/add-food`
+`POST https://wjwzxgtrccjnfvkjaiyr.supabase.co/functions/v1/add-food`
 
 Headers:
 
@@ -109,4 +109,5 @@ After configuring your project, verify with two accounts: each can add/read/edit
 - [Tailwind Vite integration](https://tailwindcss.com/docs/installation/using-vite)
 - [Supabase Edge Function authentication](https://supabase.com/docs/guides/functions/auth)
 - [GitHub Pages custom workflows](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)
+
 
