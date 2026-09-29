@@ -3,3 +3,7 @@ project_id = "calorie-tracker"
 [functions.add-food]
 # The handler validates the user's JWT with Auth, supporting current signing keys.
 verify_jwt = false
+
+[functions.calorie-mcp]
+# MCP performs OAuth discovery and validates the connected user's token itself.
+verify_jwt = false

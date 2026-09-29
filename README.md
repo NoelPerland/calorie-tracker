@@ -67,7 +67,21 @@ npx supabase functions deploy add-food --project-ref wjwzxgtrccjnfvkjaiyr
 
 `SUPABASE_URL` and `SUPABASE_ANON_KEY` are supplied to hosted Edge Functions by Supabase. No privileged service key is used. The function has gateway JWT verification disabled because it verifies the bearer token itself with `auth.getUser()` and forwards that user token to the database for RLS enforcement.
 
-## 6. Future ChatGPT integration
+## 6. ChatGPT integration
+
+The deployed MCP endpoint is:
+
+```text
+https://wjwzxgtrccjnfvkjaiyr.supabase.co/functions/v1/calorie-mcp
+```
+
+In ChatGPT, enable Developer mode in **Settings → Security and login**, open **Plugins**, add that MCP URL, and connect your Calorie Tracker account. Then use the plugin in a Work chat and say what you ate. ChatGPT estimates calories and macros and calls `log_food`; the app receives the new row live with a **CHAT** badge.
+
+Supabase Auth provides OAuth 2.1 account linking. In **Authentication → OAuth Server**, enable the server, set the authorization path to `/oauth/consent`, and enable dynamic client registration. The consent page is part of the React app. GitHub Pages deploys `index.html` as `404.html` too, so the consent URL works when opened directly.
+
+The MCP server validates the Supabase access token, writes with that user token, and relies on the same owner-only RLS policies as the app. ChatGPT performs the estimate; there is no separate OpenAI API key and no service-role key.
+
+The lower-level JSON endpoint remains available for other clients:
 
 `POST https://wjwzxgtrccjnfvkjaiyr.supabase.co/functions/v1/add-food`
 
@@ -95,9 +109,7 @@ Body:
 
 `notes` is optional. `source` defaults to `manual`; a chat connector should always send `chat`. The endpoint accepts only these documented fields, limits input to 16 KB, validates names/macros/timestamps, and derives `user_id` exclusively from the authenticated token. Success is `201 { "entry": { ... } }`. Errors: 400 invalid data, 401 invalid/missing user authentication, 405 wrong method, 413 oversized body, 415 wrong content type, 500 database failure, or 503 temporary service failure. CORS permits browser callers but does not replace authentication.
 
-A future MCP tool such as `add_food_entry` can accept this same JSON schema and call this endpoint using the connected user's short-lived access token. Implement authenticated account linking and secure refresh-token storage in that connector, and refresh tokens when expired. Do not hardcode a personal access token into an OpenAPI document, frontend, or public repository. The endpoint is **not itself an MCP server**, and no ChatGPT connector is installed by this project. A Hevy connection does not automatically grant access to this separate nutrition database.
-
-Chat-created entries appear in the live tracker with a CHAT badge and remain editable. POST creates a new entry each time: a connector must avoid blindly retrying after an ambiguous timeout because that can create duplicates. Add idempotency when implementing that connector.
+Chat-created entries remain editable. Both endpoints create a new entry per successful call, so clients should not blindly retry after an ambiguous timeout.
 
 ## Live acceptance checks
 
@@ -109,5 +121,4 @@ After configuring your project, verify with two accounts: each can add/read/edit
 - [Tailwind Vite integration](https://tailwindcss.com/docs/installation/using-vite)
 - [Supabase Edge Function authentication](https://supabase.com/docs/guides/functions/auth)
 - [GitHub Pages custom workflows](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)
-
 

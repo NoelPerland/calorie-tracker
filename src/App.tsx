@@ -25,6 +25,28 @@ function Auth() {
   return <main className="auth-shell"><Brand/><div className="auth-card"><span className="eyebrow">SMALL HABITS. REAL PROGRESS.</span><h1>Your day,<br/>in balance.</h1><p className="text-muted mb-8">A little clarity for everything you eat.</p>{!supabase ? <div className="notice"><h2>Connect your tracker</h2><p>Your tracker is deployed. Database setup is still in progress; meal logging will be available once it is connected.</p><p className="mt-3"><a className="text-button" href="https://github.com/NoelPerland/calorie-tracker#5-github-pages-deployment">Open setup instructions →</a></p><p className="text-xs">For local development, configure <code>.env.local</code>. For this hosted site, set the Supabase repository variables and rerun deployment.</p></div> : <><form onSubmit={submit} className="grid gap-4"><label>Email<input autoComplete="email" name="email" type="email" required placeholder="you@example.com"/></label><label>Password<input autoComplete={mode === 'login' ? 'current-password':'new-password'} name="password" type="password" minLength={8} required placeholder="At least 8 characters"/></label><button type="submit" className="primary mt-2" disabled={busy}>{busy ? 'One moment…' : mode === 'login' ? 'Sign in →':'Create account →'}</button><p role="status" className="text-sm">{message}</p></form><button type="button" className="text-button mt-4" onClick={()=>{setMode(mode === 'login'?'signup':'login');setMessage('');}}>{mode === 'login' ? 'New here? Create an account':'Already have an account? Sign in'}</button></>}</div><p className="auth-footer">YOUR NUTRITION. YOUR PACE.</p></main>;
 }
 
+function OAuthConsent() {
+  const authorizationId=new URLSearchParams(location.search).get('authorization_id');
+  const [details,setDetails]=useState<{client:{name:string};scope:string;redirect_uri:string}|null>(null);
+  const [error,setError]=useState('');
+  const [busy,setBusy]=useState(true);
+  useEffect(()=>{void (async()=>{
+    if(!authorizationId){setError('This connection request is missing its authorization ID.');setBusy(false);return;}
+    const {data,error}=await supabase!.auth.oauth.getAuthorizationDetails(authorizationId);
+    if(error){setError(error.message);setBusy(false);return;}
+    if(data && !('authorization_id' in data)){location.assign(data.redirect_url);return;}
+    setDetails(data as typeof details);setBusy(false);
+  })();},[authorizationId]);
+  async function decide(approve:boolean){
+    if(!authorizationId)return;
+    setBusy(true);setError('');
+    const {data,error}=approve?await supabase!.auth.oauth.approveAuthorization(authorizationId):await supabase!.auth.oauth.denyAuthorization(authorizationId);
+    if(error){setError(error.message);setBusy(false);return;}
+    location.assign(data.redirect_url);
+  }
+  return <main className="auth-shell"><Brand/><div className="auth-card"><span className="eyebrow">CHATGPT CONNECTION</span><h1>Connect your<br/>food log.</h1>{busy&&!error?<p className="text-muted">Checking the connection…</p>:error?<div className="notice error">{error}</div>:details&&<><p className="text-muted mb-8"><strong>{details.client.name}</strong> wants permission to add meals to your Calorie Tracker account.</p>{details.scope&&<p className="text-xs text-muted mb-4">Requested access: {details.scope.split(' ').join(', ')}</p>}<div className="grid gap-3"><button type="button" className="primary" disabled={busy} onClick={()=>void decide(true)}>Connect ChatGPT →</button><button type="button" className="text-button" disabled={busy} onClick={()=>void decide(false)}>Cancel</button></div></>}</div><p className="auth-footer">YOU STAY IN CONTROL.</p></main>;
+}
+
 function FoodForm({entry,day,onClose,onSaved}:{entry:Entry|null;day:string;onClose:()=>void;onSaved:()=>void}) {
   const dialog = useRef<HTMLDialogElement>(null);
   const [busy,setBusy] = useState(false);
@@ -104,9 +126,9 @@ export default function App() {
     return ()=>subscription.unsubscribe();
   },[]);
   if(!ready)return <main className="auth-shell" role="status">Opening your tracker…</main>;
-  return session?<Tracker key={session.user.id} session={session}/>:<Auth/>;
+  const connecting=location.pathname.endsWith('/oauth/consent')&&new URLSearchParams(location.search).has('authorization_id');
+  return session?(connecting?<OAuthConsent/>:<Tracker key={session.user.id} session={session}/>):<Auth/>;
 }
-
 
 
 
