@@ -7,3 +7,7 @@ verify_jwt = false
 [functions.calorie-mcp]
 # MCP performs OAuth discovery and validates the connected user's token itself.
 verify_jwt = false
+
+[functions.analyze-food-photo]
+# The function validates the user's token and writes through RLS.
+verify_jwt = false

@@ -38,6 +38,7 @@ jobs:
           deno-version: v2.x
       - run: deno check supabase/functions/add-food/index.ts
       - run: deno check --config supabase/functions/calorie-mcp/deno.json supabase/functions/calorie-mcp/index.ts
+      - run: deno check --config supabase/functions/analyze-food-photo/deno.json supabase/functions/analyze-food-photo/index.ts
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

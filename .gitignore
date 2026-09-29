@@ -4,3 +4,4 @@ dist/
 !.env.example
 .supabase/
 supabase/.temp/
+supabase/functions/**/deno.lock

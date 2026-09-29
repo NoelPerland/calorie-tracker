@@ -1,6 +1,6 @@
 # Calorie Tracker
 
-A small React + TypeScript nutrition tracker. Vite, Tailwind CSS, Supabase Auth/Postgres/Realtime, and GitHub Pages. Add, edit, and delete meals; see daily calories and macros; open any logged day in History. Times and day boundaries use the device's local timezone. Values can be estimates; there are no imposed calorie targets.
+A small React + TypeScript nutrition tracker. Log meals through ChatGPT, a food photo, or a barcode scan; edit estimates, see daily calories and macros, and open any logged day in History. Vite, Tailwind CSS, Supabase Auth/Postgres/Realtime, and GitHub Pages.
 
 ## 1. Create Supabase
 
@@ -63,6 +63,7 @@ GitHub Pages hosts only the frontend. Deploy the database and Edge Function to S
 
 ```sh
 npx supabase functions deploy add-food --project-ref wjwzxgtrccjnfvkjaiyr
+npx supabase functions deploy analyze-food-photo --project-ref wjwzxgtrccjnfvkjaiyr
 ```
 
 `SUPABASE_URL` and `SUPABASE_ANON_KEY` are supplied to hosted Edge Functions by Supabase. No privileged service key is used. The function has gateway JWT verification disabled because it verifies the bearer token itself with `auth.getUser()` and forwards that user token to the database for RLS enforcement.
@@ -80,6 +81,16 @@ In ChatGPT, enable Developer mode in **Settings → Security and login**, open *
 Supabase Auth provides OAuth 2.1 account linking. In **Authentication → OAuth Server**, enable the server, set the authorization path to `/`, and enable dynamic client registration. The React app displays its consent screen whenever Supabase supplies an `authorization_id`.
 
 The MCP server validates the Supabase access token, writes with that user token, and relies on the same owner-only RLS policies as the app. ChatGPT performs the estimate; there is no separate OpenAI API key and no service-role key.
+
+Photo analysis uses the OpenAI Responses API from `analyze-food-photo`. Store the API key only as a Supabase Edge Function secret:
+
+```sh
+npx supabase secrets set OPENAI_API_KEY=YOUR_OPENAI_API_KEY --project-ref wjwzxgtrccjnfvkjaiyr
+```
+
+The browser sends the signed-in user's token and a temporary image data URL to the function. The function validates the user, asks the vision model for a structured estimate, and inserts through user-scoped RLS. The image is not stored by this project. OpenAI API usage is billed separately from a ChatGPT subscription.
+
+Barcode scanning runs in the browser and reads product nutrition from the [Open Food Facts API](https://openfoodfacts.github.io/documentation/docs/Product-Opener/v2/products/get-product-by-code/). It logs per-serving values when a complete serving set exists, otherwise per 100 g, and records that basis in the entry notes.
 
 The lower-level JSON endpoint remains available for other clients:
 
