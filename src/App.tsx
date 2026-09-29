@@ -126,7 +126,7 @@ export default function App() {
     return ()=>subscription.unsubscribe();
   },[]);
   if(!ready)return <main className="auth-shell" role="status">Opening your tracker…</main>;
-  const connecting=location.pathname.endsWith('/oauth/consent')&&new URLSearchParams(location.search).has('authorization_id');
+  const connecting=new URLSearchParams(location.search).has('authorization_id');
   return session?(connecting?<OAuthConsent/>:<Tracker key={session.user.id} session={session}/>):<Auth/>;
 }
 

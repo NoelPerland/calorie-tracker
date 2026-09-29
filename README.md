@@ -77,7 +77,7 @@ https://wjwzxgtrccjnfvkjaiyr.supabase.co/functions/v1/calorie-mcp
 
 In ChatGPT, enable Developer mode in **Settings → Security and login**, open **Plugins**, add that MCP URL, and connect your Calorie Tracker account. Then use the plugin in a Work chat and say what you ate. ChatGPT estimates calories and macros and calls `log_food`; the app receives the new row live with a **CHAT** badge.
 
-Supabase Auth provides OAuth 2.1 account linking. In **Authentication → OAuth Server**, enable the server, set the authorization path to `/oauth/consent`, and enable dynamic client registration. The consent page is part of the React app. GitHub Pages deploys `index.html` as `404.html` too, so the consent URL works when opened directly.
+Supabase Auth provides OAuth 2.1 account linking. In **Authentication → OAuth Server**, enable the server, set the authorization path to `/`, and enable dynamic client registration. The React app displays its consent screen whenever Supabase supplies an `authorization_id`.
 
 The MCP server validates the Supabase access token, writes with that user token, and relies on the same owner-only RLS policies as the app. ChatGPT performs the estimate; there is no separate OpenAI API key and no service-role key.
 
