@@ -2,6 +2,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { finishSpotifyConnection } from './spotify';
 import './style.css';
+import './editorial.css';
 async function start() {
   try { await finishSpotifyConnection(); }
   catch (error) { try { sessionStorage.setItem('spotify_error', error instanceof Error ? error.message : 'Spotify connection failed.'); } catch { /* browser storage is unavailable */ } }

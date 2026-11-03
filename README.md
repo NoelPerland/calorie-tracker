@@ -2,6 +2,8 @@
 
 A React + TypeScript nutrition and training tracker. Log meals through ChatGPT, a food photo, or a barcode scan; record workouts, body weight, and personal records; and attach a Spotify song to a completed workout. Vite, Tailwind CSS, Supabase Auth/Postgres/Realtime, and GitHub Pages.
 
+The editorial visual refresh lives in `src/editorial.css`, loaded after the original component styles. It covers sign-in, nutrition, training, forms, and mobile layouts without changing data or authentication behavior.
+
 ## 1. Create Supabase
 
 The Supabase project **calorie-tracker** is connected at `https://wjwzxgtrccjnfvkjaiyr.supabase.co`. The app requires email/password authentication. Email confirmation remains enabled.
