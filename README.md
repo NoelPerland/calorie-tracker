@@ -1,6 +1,6 @@
 # Calorie Tracker
 
-A small React + TypeScript nutrition tracker. Log meals through ChatGPT, a food photo, or a barcode scan; edit estimates, see daily calories and macros, and open any logged day in History. Vite, Tailwind CSS, Supabase Auth/Postgres/Realtime, and GitHub Pages.
+A React + TypeScript nutrition and training tracker. Log meals through ChatGPT, a food photo, or a barcode scan; record workouts, body weight, and personal records; and attach a Spotify song to a completed workout. Vite, Tailwind CSS, Supabase Auth/Postgres/Realtime, and GitHub Pages.
 
 ## 1. Create Supabase
 
@@ -23,6 +23,8 @@ These two values are public configuration and are embedded in the frontend. Neve
 
 Run `supabase/migrations/20260929000000_food_entries.sql` **once** in the project's SQL editor. It creates the table, constraints, indexed owner/date lookup, four owner-only RLS policies, and Realtime publication membership. Anonymous clients have no table access. Updates cannot transfer an entry to another user.
 
+The additive `20261103140442_workout_tracking.sql` migration creates private workout and body-weight tables with owner-only RLS. It has already been applied to the connected project. Keep both migrations for new installations. Existing meal rows are untouched.
+
 Alternatively, with the Supabase CLI:
 
 ```sh
@@ -42,6 +44,14 @@ npm run dev
 
 Open `http://localhost:5173/calorie-tracker/`. Without environment values, the app shows a setup message; it never pretends to save food. Create an account, confirm email, then sign in.
 
+Use the top-right menu for workouts, your completed-workout feed, body weight, PRs, account, and sign out. Start a workout from scratch or repeat a completed one. Mark sets done, save progress, and finish with at least one completed set. PRs are the heaviest completed set for each exercise (reps break ties). The feed is private to your account.
+
+## Spotify songs
+
+Create a Spotify Developer app and register these exact redirect URIs: `https://noelperland.github.io/calorie-tracker/` and `http://127.0.0.1:5173/calorie-tracker/`. Set its **public Client ID** as `VITE_SPOTIFY_CLIENT_ID` in `.env.local` and as a GitHub Actions repository variable for deployment. Do not use a Client Secret in the browser. After a workout is complete, open its feed card, connect Spotify, search for a track, and attach it. The song links to Spotify; the app does not stream music. Spotify uses PKCE with a browser-session token, so reconnect when the session expires.
+
+The redirect URI must match the port you actually use. If GameHub occupies port 5173 on this device, also register `http://127.0.0.1:5174/calorie-tracker/` for a tracker running on port 5174.
+
 ```sh
 npm test
 npm run typecheck
@@ -53,7 +63,7 @@ The build includes TypeScript checks. Tests cover the shared API/form validation
 
 ## 5. GitHub Pages deployment
 
-The target repository is **NoelPerland/calorie-tracker**. Push this directory's contents to its `main` branch. In Settings → Pages, select **GitHub Actions** as the source. In Settings → Secrets and variables → Actions → Variables, create `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` with the public values above when available.
+The target repository is **NoelPerland/calorie-tracker**. Push this directory's contents to its `main` branch. In Settings → Pages, select **GitHub Actions** as the source. In Settings → Secrets and variables → Actions → Variables, create `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, and `VITE_SPOTIFY_CLIENT_ID` with the public values above when available.
 
 Every push to `main`, or manual run of `.github/workflows/deploy.yml`, installs locked dependencies, runs tests, checks TypeScript, builds the frontend, checks the Edge Function, and deploys the `dist` artifact. Until Supabase is configured, placeholder values deploy the explicit setup screen. Once the real repository variables are set, rerun the workflow to enable authentication and meal tracking. A placeholder deployment cannot save meals.
 

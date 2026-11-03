@@ -33,6 +33,7 @@ jobs:
         env:
           VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL || 'https://YOUR_PROJECT.supabase.co' }}
           VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY || 'YOUR_PUBLIC_ANON_KEY' }}
+          VITE_SPOTIFY_CLIENT_ID: ${{ vars.VITE_SPOTIFY_CLIENT_ID }}
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
