@@ -5,3 +5,5 @@ dist/
 .supabase/
 supabase/.temp/
 supabase/functions/**/deno.lock
+
+.qa/

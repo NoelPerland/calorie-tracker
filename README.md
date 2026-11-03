@@ -1,10 +1,20 @@
 # Calorie Tracker
 
-A small React + TypeScript nutrition tracker. Log meals through ChatGPT, a food photo, or a barcode scan; edit estimates, see daily calories and macros, and open any logged day in History. Vite, Tailwind CSS, Supabase Auth/Postgres/Realtime, and GitHub Pages.
+A small React + TypeScript nutrition tracker. Start without an account: manually log meals or look up a barcode, edit estimates, see daily calories and macros, and open any logged day in History. Optional accounts add Supabase sync, ChatGPT and food-photo logging. Vite, Tailwind CSS, Supabase Auth/Postgres/Realtime, and GitHub Pages.
+
+## Device guest mode
+
+Guest mode works without Supabase configuration. Entries persist in browser localStorage and require an explicit **Continue on this device** after reload. Guest data is never copied to a signed-in account, and account entries are never cached in the guest journal. Each new journal gets a random ownership ID; loading and mutations validate ownership and food inputs. Corrupt storage is reported without overwriting entries. Storage failures never report a successful save.
+
+This is device-local storage, not encryption or a separate browser identity: anyone sharing the browser profile can explicitly open its journal. Use **Erase journal** before sharing a device. Erasing also revokes the journal in other open tabs; the next guest journal starts empty. Clearing browser storage deletes entries. There is no cloud backup or automatic account migration. Private browsing storage may disappear when closed.
+
+Manual guest tracking makes no remote food-data calls. Barcode lookup sends the product code to Open Food Facts; photo analysis and ChatGPT remain account-only. Nutrition remains descriptive, without weight-loss targets.
+
+Verification: `npm test` covers food validation, persistence, ownership, corrupt storage and storage failures. `npm run build` typechecks and builds production assets. For desktop/mobile browser checks, start `npm run preview -- --port 3132 --strictPort`, then `npm run test:browser` (Chrome required; override `CHROME_PATH` or `TEST_URL`). Browser checks cover create/edit/delete, history, reload, isolated browser profiles, cross-tab erase and a clearly mocked barcode response. `npm run test:account` builds an isolated fixture under `.qa`, starts its own preview server, and verifies account login/logout, ownership-filtered writes and guest/account separation using mocked Supabase responses. It never changes the deployable `dist` build. These tests do not assert live Supabase credentials or photo inference.
 
 ## 1. Create Supabase
 
-The Supabase project **calorie-tracker** is connected at `https://wjwzxgtrccjnfvkjaiyr.supabase.co`. The app requires email/password authentication. Email confirmation remains enabled.
+The Supabase project **calorie-tracker** is connected at `https://wjwzxgtrccjnfvkjaiyr.supabase.co`. Cloud features require optional email/password authentication. Email confirmation remains enabled. Guest tracking requires no Supabase setup.
 
 In Authentication → URL Configuration, set the Site URL to `https://NoelPerland.github.io/calorie-tracker/`. Add that exact URL and `http://localhost:5173/calorie-tracker/` (or `http://127.0.0.1:5173/calorie-tracker/`) as allowed redirect URLs. After confirming their email, users sign in and arrive directly on Today.
 
@@ -133,3 +143,7 @@ After configuring your project, verify with two accounts: each can add/read/edit
 - [Supabase Edge Function authentication](https://supabase.com/docs/guides/functions/auth)
 - [GitHub Pages custom workflows](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages)
 
+
+## Continue with an AI on another device
+
+Read [AI_HANDOFF.md](AI_HANDOFF.md) for product purpose, visual identity, architecture, setup, verification and remaining limits. The latest redesign and guest-mode work is on the handoff/studio-redesign branch. Local databases, environment files and browser guest meals are not included in Git.
