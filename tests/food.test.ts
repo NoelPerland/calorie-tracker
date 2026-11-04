@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { validateFood } from '../supabase/functions/_shared/food.ts';
-import { barcodeFood, dayKey, totals } from '../src/data.ts';
+import { barcodeFood, dayKey, readGuestEntries, totals, writeGuestEntries } from '../src/data.ts';
 import { personalRecords, validateWorkout, type Workout } from '../src/training-data.ts';
 const example={name:'  Eggs and beans  ',calories:372,protein:30,carbs:28,fat:12,eaten_at:'2026-09-29T08:00:00+02:00',source:'chat'};
 test('API validates, normalizes and prevents caller-supplied ownership',()=>{
@@ -26,4 +26,17 @@ test('workout records use completed sets only and repeat data stays editable',()
   assert.throws(()=>validateWorkout(' ','',exercises));
   const workout={id:'1',user_id:'u',title:'Push day',notes:'',exercises,started_at:'2026-11-01T10:00:00Z',completed_at:'2026-11-01T11:00:00Z',spotify_track_id:null,spotify_track_name:null,spotify_artist:null,spotify_url:null} as Workout;
   assert.deepEqual(personalRecords([{...workout,completed_at:null},workout]),[{name:'Bench press',weight:80,reps:8,at:'2026-11-01T11:00:00Z'}]);
+});
+
+test('guest meals persist locally and invalid saved data is rejected',()=>{
+  const storage=new Map<string,string>();
+  const original=globalThis.localStorage;
+  globalThis.localStorage={getItem:key=>storage.get(key)??null,setItem:(key,value)=>{storage.set(key,value);},removeItem:key=>{storage.delete(key);},clear:()=>storage.clear(),key:index=>[...storage.keys()][index]??null,get length(){return storage.size;}} as Storage;
+  try{
+    const meal={...validateFood(example),id:'meal-1',user_id:'guest',created_at:'2026-09-29T06:00:00Z'};
+    writeGuestEntries([meal]);
+    assert.deepEqual(readGuestEntries(),[meal]);
+    storage.set('calorie-tracker-guest-food','{"unexpected":true}');
+    assert.throws(()=>readGuestEntries());
+  }finally{globalThis.localStorage=original;}
 });

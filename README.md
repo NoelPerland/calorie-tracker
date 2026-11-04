@@ -2,11 +2,11 @@
 
 A React + TypeScript nutrition and training tracker. Log meals through ChatGPT, a food photo, or a barcode scan; record workouts, body weight, and personal records; and attach a Spotify song to a completed workout. Vite, Tailwind CSS, Supabase Auth/Postgres/Realtime, and GitHub Pages.
 
-The editorial visual refresh lives in `src/editorial.css`, loaded after the original component styles. It covers sign-in, nutrition, training, forms, and mobile layouts without changing data or authentication behavior.
+The mobile-first visual system lives in `src/athletic.css`, loaded after the base component styles. Guest food logging uses this device's browser storage; signed-in data continues to use Supabase.
 
 ## 1. Create Supabase
 
-The Supabase project **calorie-tracker** is connected at `https://wjwzxgtrccjnfvkjaiyr.supabase.co`. The app requires email/password authentication. Email confirmation remains enabled.
+The Supabase project **calorie-tracker** is connected at `https://wjwzxgtrccjnfvkjaiyr.supabase.co`. Food can be logged as a guest without an account. Email/password authentication enables cross-device food sync, workouts, weight, PRs, photo analysis, and ChatGPT logging. Email confirmation remains enabled.
 
 In Authentication → URL Configuration, set the Site URL to `https://NoelPerland.github.io/calorie-tracker/`. Add that exact URL and `http://localhost:5173/calorie-tracker/` (or `http://127.0.0.1:5173/calorie-tracker/`) as allowed redirect URLs. After confirming their email, users sign in and arrive directly on Today.
 
@@ -23,7 +23,7 @@ These two values are public configuration and are embedded in the frontend. Neve
 
 ## 3. Database setup
 
-Run `supabase/migrations/20260929000000_food_entries.sql` **once** in the project's SQL editor. It creates the table, constraints, indexed owner/date lookup, four owner-only RLS policies, and Realtime publication membership. Anonymous clients have no table access. Updates cannot transfer an entry to another user.
+Run `supabase/migrations/20260929000000_food_entries.sql` **once** in the project's SQL editor. It creates the table, constraints, indexed owner/date lookup, four owner-only RLS policies, and Realtime publication membership. Unsigned visitors have no table access; guest meals stay in browser storage. Updates cannot transfer an entry to another user.
 
 The additive `20261103140442_workout_tracking.sql` migration creates private workout and body-weight tables with owner-only RLS. It has already been applied to the connected project. Keep both migrations for new installations. Existing meal rows are untouched.
 
@@ -44,7 +44,7 @@ npm ci
 npm run dev
 ```
 
-Open `http://localhost:5173/calorie-tracker/`. Without environment values, the app shows a setup message; it never pretends to save food. Create an account, confirm email, then sign in.
+Open `http://localhost:5173/calorie-tracker/`. You can quick-add food and look up barcodes as a guest, even without environment values. Guest meals remain on that device and are lost if browser storage is cleared; signing into an existing account does not move them into Supabase. For sync and training, create an account, confirm email, then sign in.
 
 Use the top-right menu for workouts, your completed-workout feed, body weight, PRs, account, and sign out. Start a workout from scratch or repeat a completed one. Mark sets done, save progress, and finish with at least one completed set. PRs are the heaviest completed set for each exercise (reps break ties). The feed is private to your account.
 
@@ -67,7 +67,7 @@ The build includes TypeScript checks. Tests cover the shared API/form validation
 
 The target repository is **NoelPerland/calorie-tracker**. Push this directory's contents to its `main` branch. In Settings → Pages, select **GitHub Actions** as the source. In Settings → Secrets and variables → Actions → Variables, create `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, and `VITE_SPOTIFY_CLIENT_ID` with the public values above when available.
 
-Every push to `main`, or manual run of `.github/workflows/deploy.yml`, installs locked dependencies, runs tests, checks TypeScript, builds the frontend, checks the Edge Function, and deploys the `dist` artifact. Until Supabase is configured, placeholder values deploy the explicit setup screen. Once the real repository variables are set, rerun the workflow to enable authentication and meal tracking. A placeholder deployment cannot save meals.
+Every push to `main`, or manual run of `.github/workflows/deploy.yml`, installs locked dependencies, runs tests, checks TypeScript, builds the frontend, checks the Edge Function, and deploys the `dist` artifact. Without Supabase variables, guest food logging still works locally; accounts and sync remain unavailable. Once the real repository variables are set, rerun deployment to enable them.
 
 The result is `https://NoelPerland.github.io/calorie-tracker/`. `vite.config.ts` sets `base: '/calorie-tracker/'`; navigation is in-app and does not depend on server rewrites. If you rename the repository, update the base path and Auth redirect URLs together.
 
