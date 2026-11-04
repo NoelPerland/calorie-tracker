@@ -46,7 +46,7 @@ npm run dev
 
 Open `http://localhost:5173/calorie-tracker/`. You can quick-add food, look up barcodes, log workouts and body weight as a guest, even without environment values. Guest data remains on that device and is lost if browser storage is cleared; signing into an existing account does not move it into Supabase. Sign in for cross-device sync of meals, workouts, weight, and PRs.
 
-Use the top-right menu for workouts, your completed-workout feed, body weight, PRs, account, and sign out. Start from scratch, repeat a completed workout, save a routine, or use a simple equipment-and-goal starter session. Suggestions are fixed exercise templates, not AI coaching or personalized medical advice. Mark sets done, save progress, and finish with at least one completed set. PRs are the heaviest completed set for each exercise (reps break ties). Guest feed and PRs stay on this device; signed-in feed and PRs use private account data.
+Use the top-right menu for workouts, your completed-workout feed, body weight, PRs, account, and sign out. Start from scratch, repeat a completed workout, save a routine, or build a starter session from any combination of bodyweight, dumbbells, and barbell plus one or more muscle groups. Rename, add, or remove exercises and edit every set. Suggestions use fixed exercise templates, not AI coaching or medical advice. Mark sets done, save progress, and finish with at least one completed set. Delete sessions from the workout list or completed feed; deleting a completed session also removes its feed entry and any PR derived from it. PRs are the heaviest completed set for each exercise (reps break ties). Guest feed and PRs stay on this device; signed-in feed and PRs use private account data.
 
 ## Spotify songs
 

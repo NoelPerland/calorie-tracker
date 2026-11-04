@@ -150,7 +150,9 @@ input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px}
 .training-block{margin-top:18px;padding:24px;border:1px solid var(--line);border-radius:18px;background:var(--surface)}
 .training-block h2{margin-bottom:14px;color:var(--ink);font-size:21px}
 .training-list{display:grid;gap:0;margin-top:24px}
-.training-card{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px 2px;border:0;border-bottom:1px solid var(--line);border-radius:0;background:transparent}
+.training-card{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:20px 2px;border:0;border-bottom:1px solid var(--line);border-radius:0;background:transparent}
+.training-card>div{flex:1;min-width:145px}
+.training-card .delete-action{color:var(--muted)}
 .training-card h3{color:var(--ink);font-size:18px}
 .training-card p,.feed-card p,.training-block p{color:var(--muted);font-size:13px}
 .training-card strong{color:var(--ink);font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-size:26px}
@@ -253,8 +255,18 @@ input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px}
 .workout-launch{display:flex;align-items:center;flex-wrap:wrap;gap:10px 20px}
 .shortcuts-heading h2{margin:0 0 4px;font-size:23px;letter-spacing:-.04em}
 .shortcuts-heading p{margin:0;color:var(--muted);font-size:13px}
-.preference-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:22px 0 15px}
-.preference-row select{display:block;width:100%;min-height:48px;margin-top:7px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);font:inherit}
+.preference-panel{display:grid;gap:19px;margin:22px 0 18px}
+.preference-choice{min-width:0;margin:0;padding:0;border:0}
+.preference-choice legend,.goal-choice{margin-bottom:9px;color:var(--ink);font-size:13px;font-weight:700}
+.choice-chips{display:flex;flex-wrap:wrap;gap:8px}
+.choice-chips button{min-height:44px;padding:9px 14px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);font-size:13px;font-weight:650}
+.choice-chips button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent);color:#161715}
+.choice-chips button:hover{border-color:var(--accent)}
+.goal-choice select{display:block;width:100%;max-width:280px;min-height:48px;margin-top:8px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);font:inherit}
+.exercise-name{flex:1;min-width:0}
+.exercise-name input{margin-top:5px}
+.exercise-card .section-heading{align-items:end}
+.suggestion:disabled{opacity:.65;cursor:not-allowed}
 .suggestion{display:flex;align-items:center;justify-content:space-between;gap:15px;width:100%;min-height:90px;padding:18px;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:9px;background:var(--surface);color:var(--ink);text-align:left}
 .suggestion strong,.suggestion small,.routine-row strong,.routine-row small{display:block}
 .suggestion strong{font-size:18px}.suggestion small{margin-top:6px;color:var(--muted);font-size:12px;line-height:1.4}.suggestion>span:last-child{font-size:25px}
