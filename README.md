@@ -2,11 +2,11 @@
 
 A React + TypeScript nutrition and training tracker. Log meals through ChatGPT, a food photo, or a barcode scan; record workouts, body weight, and personal records; and attach a Spotify song to a completed workout. Vite, Tailwind CSS, Supabase Auth/Postgres/Realtime, and GitHub Pages.
 
-The mobile-first visual system lives in `src/athletic.css`, loaded after the base component styles. Guest food logging uses this device's browser storage; signed-in data continues to use Supabase.
+The mobile-first visual system lives in `src/athletic.css`, loaded after the base component styles. The home screen prioritizes meal and workout logging; nutrition details, history, weight, PRs, and the workout feed sit one level deeper. Guest food and training logs use this device's browser storage; signed-in meals and workouts continue to use Supabase. Routines and equipment/goal preferences stay on this device, scoped to the guest or signed-in user.
 
 ## 1. Create Supabase
 
-The Supabase project **calorie-tracker** is connected at `https://wjwzxgtrccjnfvkjaiyr.supabase.co`. Food can be logged as a guest without an account. Email/password authentication enables cross-device food sync, workouts, weight, PRs, photo analysis, and ChatGPT logging. Email confirmation remains enabled.
+The Supabase project **calorie-tracker** is connected at `https://wjwzxgtrccjnfvkjaiyr.supabase.co`. Food and training can be logged as a guest without an account. Email/password authentication enables cross-device sync, photo analysis, and ChatGPT logging. Email confirmation remains enabled.
 
 In Authentication → URL Configuration, set the Site URL to `https://NoelPerland.github.io/calorie-tracker/`. Add that exact URL and `http://localhost:5173/calorie-tracker/` (or `http://127.0.0.1:5173/calorie-tracker/`) as allowed redirect URLs. After confirming their email, users sign in and arrive directly on Today.
 
@@ -44,9 +44,9 @@ npm ci
 npm run dev
 ```
 
-Open `http://localhost:5173/calorie-tracker/`. You can quick-add food and look up barcodes as a guest, even without environment values. Guest meals remain on that device and are lost if browser storage is cleared; signing into an existing account does not move them into Supabase. For sync and training, create an account, confirm email, then sign in.
+Open `http://localhost:5173/calorie-tracker/`. You can quick-add food, look up barcodes, log workouts and body weight as a guest, even without environment values. Guest data remains on that device and is lost if browser storage is cleared; signing into an existing account does not move it into Supabase. Sign in for cross-device sync of meals, workouts, weight, and PRs.
 
-Use the top-right menu for workouts, your completed-workout feed, body weight, PRs, account, and sign out. Start a workout from scratch or repeat a completed one. Mark sets done, save progress, and finish with at least one completed set. PRs are the heaviest completed set for each exercise (reps break ties). The feed is private to your account.
+Use the top-right menu for workouts, your completed-workout feed, body weight, PRs, account, and sign out. Start from scratch, repeat a completed workout, save a routine, or use a simple equipment-and-goal starter session. Suggestions are fixed exercise templates, not AI coaching or personalized medical advice. Mark sets done, save progress, and finish with at least one completed set. PRs are the heaviest completed set for each exercise (reps break ties). Guest feed and PRs stay on this device; signed-in feed and PRs use private account data.
 
 ## Spotify songs
 
