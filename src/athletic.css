@@ -237,6 +237,9 @@ input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px}
 .daily-action strong,.daily-action small{display:block}
 .daily-action strong{font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-size:27px;font-weight:700;letter-spacing:-.01em;text-transform:uppercase}
 .daily-action small{margin-top:4px;font-size:13px;font-weight:500;opacity:.78}
+.heading .eyebrow,.dialog-heading .eyebrow{display:none}
+.meal-section .empty{padding:20px 0;border:0;background:transparent}
+.meal-section .empty p{display:none}
 .action-symbol{display:grid;place-items:center;flex:none;width:46px;height:46px;border:1px solid currentColor;border-radius:50%;font-size:26px;line-height:1}
 .daily-action-food{background:var(--accent);color:#161715}
 .daily-action-workout{border:1px solid #667064;background:#272d27;color:var(--ink)}
@@ -267,7 +270,7 @@ input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px}
 .exercise-name input{margin-top:5px}
 .exercise-card .section-heading{align-items:end}
 .suggestion:disabled{opacity:.65;cursor:not-allowed}
-.suggestion{display:flex;align-items:center;justify-content:space-between;gap:15px;width:100%;min-height:90px;padding:18px;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:9px;background:var(--surface);color:var(--ink);text-align:left}
+.suggestion{display:flex;align-items:center;justify-content:space-between;gap:15px;width:100%;min-height:90px;padding:18px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);text-align:left}
 .suggestion strong,.suggestion small,.routine-row strong,.routine-row small{display:block}
 .suggestion strong{font-size:18px}.suggestion small{margin-top:6px;color:var(--muted);font-size:12px;line-height:1.4}.suggestion>span:last-child{font-size:25px}
 .routine-list{margin-top:24px}.routine-list h2{display:flex;justify-content:space-between;font-size:18px}.routine-list h2 span{color:var(--muted);font-size:11px;font-weight:500}.routine-row{display:flex;align-items:center;gap:12px;min-height:62px;border-top:1px solid var(--line)}.routine-row>div{flex:1}.routine-row small{color:var(--muted);font-size:12px}
