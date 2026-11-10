@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111311">
+  <title>Privacy · Calorie Tracker</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;background:#111311;color:#f4f0e7;font:17px/1.65 system-ui,sans-serif}main{max-width:760px;margin:auto;padding:clamp(28px,6vw,68px)}a{color:#f2a075}a:focus-visible{outline:3px solid #f2a075;outline-offset:4px}h1,h2{line-height:1.12}h1{font-size:clamp(42px,8vw,76px);letter-spacing:-.06em;margin:54px 0 18px}h2{font-size:25px;margin:44px 0 10px}p,li{color:#d5d7d0}ul{padding-left:24px}header{border-bottom:1px solid #434a42;padding-bottom:20px;font-weight:700}.date{color:#aeb5ab;font-size:14px}footer{border-top:1px solid #434a42;margin-top:60px;padding-top:20px}
+  </style>
+</head>
+<body><main>
+  <header><a href="/calorie-tracker/">← Calorie Tracker</a></header>
+  <h1>Privacy, plainly.</h1>
+  <p class="date">Updated 10 November 2026</p>
+  <p>Calorie Tracker lets you log food, workouts and body weight. You can use it as a guest without an account.</p>
+  <h2>What stays on your device</h2>
+  <p>Guest meals, workouts and weight entries are saved in this device’s app storage. They do not sync to an account. Clearing app storage removes them. Workout routines and training preferences are also saved on the device, scoped to the current guest or account.</p>
+  <h2>What syncs when you sign in</h2>
+  <p>Supabase handles email and password authentication and stores your account’s meals, workout sessions and body weight. These records are private to your account. Signing in does not upload guest records.</p>
+  <h2>Optional services</h2>
+  <ul>
+    <li>If you choose photo analysis, the selected food image is sent to the app’s Supabase function and OpenAI to estimate nutrition. The app does not save the photo.</li>
+    <li>If you connect the ChatGPT integration, ChatGPT can send food entries to your account after you authorize it.</li>
+    <li>Barcode lookup sends the scanned product code to Open Food Facts.</li>
+    <li>If you connect Spotify, its authorization token is held for the browser session. The selected song’s title, artist, ID and URL are saved with your completed workout.</li>
+  </ul>
+  <p>Those services process information under their own privacy policies. The app has no advertising or third-party analytics.</p>
+  <h2>Delete your account</h2>
+  <p>Open the account menu and choose <strong>Delete account</strong>. After you confirm, the account and its synced meals, workouts and body weight are deleted. Guest data on this device is separate. You can also write to <a href="mailto:noel.perland@gmail.com">noel.perland@gmail.com</a> about your data.</p>
+  <footer><a href="/calorie-tracker/">Back to the tracker</a></footer>
+</main></body></html>

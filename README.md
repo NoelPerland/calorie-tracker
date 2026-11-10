@@ -71,16 +71,27 @@ Every push to `main`, or manual run of `.github/workflows/deploy.yml`, installs 
 
 The result is `https://NoelPerland.github.io/calorie-tracker/`. `vite.config.ts` sets `base: '/calorie-tracker/'`; navigation is in-app and does not depend on server rewrites. If you rename the repository, update the base path and Auth redirect URLs together.
 
+The privacy policy is published at `https://noelperland.github.io/calorie-tracker/privacy.html`. Signed-in users can delete their account from the menu; the `delete-account` Edge Function verifies their token and removes their account and owner-linked records. Guest data stays separate on the device.
+
 GitHub Pages hosts only the frontend. Deploy the database and Edge Function to Supabase separately:
 
 ```sh
 npx supabase functions deploy add-food --project-ref wjwzxgtrccjnfvkjaiyr
 npx supabase functions deploy analyze-food-photo --project-ref wjwzxgtrccjnfvkjaiyr
+npx supabase functions deploy delete-account --project-ref wjwzxgtrccjnfvkjaiyr
 ```
 
 `SUPABASE_URL` and `SUPABASE_ANON_KEY` are supplied to hosted Edge Functions by Supabase. No privileged service key is used. The function has gateway JWT verification disabled because it verifies the bearer token itself with `auth.getUser()` and forwards that user token to the database for RLS enforcement.
 
-## 6. ChatGPT integration
+## 6. iOS App Store preparation
+
+The Capacitor iOS project lives in `ios/App/App.xcodeproj` and uses the existing App Store Connect Bundle ID `com.noelperland.calorietracker`. Run `npm run build:ios` to build the web app with relative asset paths and sync it into the native project. The native bundle supports guest logging offline; the signed-in features still need network access. The app icon, launch screen and camera usage text are included. `.github/workflows/ios-verify.yml` runs an unsigned iOS simulator build on a macOS runner when manually triggered.
+
+Set the App Store Connect privacy policy URL to `https://noelperland.github.io/calorie-tracker/privacy.html`. Review the App Privacy answers against the policy and actual provider use. If Spotify is enabled, register `calorietracker-spotify://callback` in the Spotify developer app and add the public Client ID as `VITE_SPOTIFY_CLIENT_ID` in the iOS build environment. Never place the Client Secret in a build variable.
+
+Apple requires the first Xcode Cloud workflow to be configured in Xcode on a Mac. This Windows device can prepare and verify the project, but Xcode Cloud cannot submit its first build until that one-time setup is completed. An unsigned simulator build is not an App Store submission. Test the signed build on an iPhone before submitting it for review.
+
+## 7. ChatGPT integration
 
 The deployed MCP endpoint is:
 

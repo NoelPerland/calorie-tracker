@@ -16,7 +16,7 @@ h1,h2,h3{color:var(--ink)}
 .text-button{min-height:42px;padding:8px 0;background:transparent;border:0;color:var(--accent);font-size:14px;font-weight:700;text-decoration:none}
 .text-button:hover{color:#ffc39d;filter:none}
 .app-shell{max-width:1200px;min-height:100dvh;margin:auto;padding:0 28px 65px}
-.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;height:76px;margin:0;border-bottom:1px solid var(--line);background:var(--paper);box-shadow:none}
+.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;height:calc(76px + env(safe-area-inset-top));padding-top:env(safe-area-inset-top);margin:0;border-bottom:1px solid var(--line);background:var(--paper);box-shadow:none}
 .brand{display:flex;align-items:center;gap:10px;color:var(--ink);font-size:18px;font-weight:800;letter-spacing:-.04em}
 .brand .text-muted{color:var(--ink)!important;font-weight:500}
 .brand-icon{display:flex;align-items:center;justify-content:center;gap:3px;width:34px;height:34px;border-radius:7px;background:var(--accent);color:#161715}
@@ -298,3 +298,6 @@ input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px}
   .editor-actions .text-button{flex:1;white-space:nowrap}
   .editor-actions .primary{flex:1.4;width:auto;white-space:nowrap}
 }
+.menu-panel .menu-link{display:block;padding:12px;color:#edf2ee;text-decoration:none}
+.menu-panel .menu-link:hover{background:#35422f}
+.menu-panel .delete-account{color:#ff9b83}

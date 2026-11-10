@@ -11,3 +11,7 @@ verify_jwt = false
 [functions.analyze-food-photo]
 # The function validates the user's token and writes through RLS.
 verify_jwt = false
+
+[functions.delete-account]
+# The handler validates the user's token before using the server-only service key.
+verify_jwt = false

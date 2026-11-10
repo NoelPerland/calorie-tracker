@@ -1,7 +1,11 @@
+import { Capacitor } from '@capacitor/core';
+import { Browser } from '@capacitor/browser';
+
 export type SpotifyTrack = { id: string; name: string; artist: string; url: string };
 
 const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
-const redirectUri = () => window.location.origin + import.meta.env.BASE_URL;
+export const nativeSpotifyRedirect = 'calorietracker-spotify://callback';
+const redirectUri = () => Capacitor.isNativePlatform() ? nativeSpotifyRedirect : window.location.origin + import.meta.env.BASE_URL;
 const random = () => Array.from(crypto.getRandomValues(new Uint8Array(32)), byte => byte.toString(16).padStart(2, '0')).join('');
 
 export const spotifyConfigured = Boolean(clientId);
@@ -26,13 +30,14 @@ export async function connectSpotify(workoutId: string) {
   sessionStorage.setItem('spotify_target', workoutId);
   const url = new URL('https://accounts.spotify.com/authorize');
   url.search = new URLSearchParams({ response_type: 'code', client_id: clientId, redirect_uri: redirectUri(), state, code_challenge_method: 'S256', code_challenge: challenge }).toString();
-  window.location.assign(url.toString());
+  if (Capacitor.isNativePlatform()) await Browser.open({ url: url.toString() });
+  else window.location.assign(url.toString());
 }
 
-export async function finishSpotifyConnection() {
-  const params = new URLSearchParams(window.location.search);
+export async function finishSpotifyConnection(callbackUrl?: string) {
+  const params = new URL(callbackUrl ?? window.location.href).searchParams;
   if (!params.has('state')) return false;
-  history.replaceState(null, '', window.location.pathname + window.location.hash);
+  if (!callbackUrl) history.replaceState(null, '', window.location.pathname + window.location.hash);
   const state = sessionStorage.getItem('spotify_state');
   const verifier = sessionStorage.getItem('spotify_verifier');
   sessionStorage.removeItem('spotify_state');

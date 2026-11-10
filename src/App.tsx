@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 import type { Session } from '@supabase/supabase-js';
+import { Capacitor } from '@capacitor/core';
 import { supabase } from './supabase';
 import Training from './Training';
 import { spotifyTarget } from './spotify';
@@ -18,7 +19,8 @@ function Auth({onGuest}:{onGuest:()=>void}) {
     const form = new FormData(event.currentTarget);
     try {
       const credentials = { email:String(form.get('email')).trim(), password:String(form.get('password')) };
-      const result = mode === 'login' ? await supabase!.auth.signInWithPassword(credentials) : await supabase!.auth.signUp({ ...credentials, options:{emailRedirectTo:window.location.origin+import.meta.env.BASE_URL} });
+      const redirectTo = Capacitor.isNativePlatform() ? 'https://noelperland.github.io/calorie-tracker/' : window.location.origin+import.meta.env.BASE_URL;
+      const result = mode === 'login' ? await supabase!.auth.signInWithPassword(credentials) : await supabase!.auth.signUp({ ...credentials, options:{emailRedirectTo:redirectTo} });
       if (result.error) throw result.error;
       if (mode === 'signup' && !result.data.session) setMessage('Check your email to confirm your account, then sign in.');
     } catch(error) { setMessage(error instanceof Error ? error.message : 'Unable to sign in. Please try again.'); }
@@ -173,10 +175,19 @@ function Tracker({session,onAccount}:{session:Session|null;onAccount:()=>void}) 
     if(error)throw error;
   }
   function saved(message:string){setAdding(false);setForm(null);setToast(message);void refresh();}
+  async function deleteAccount(){
+    if(!session||!window.confirm('Delete your account and all synced meals, workouts, and weight entries? This cannot be undone.'))return;
+    setError('');
+    const {data,error}=await supabase!.functions.invoke('delete-account',{body:{confirm:'DELETE'}});
+    if(error||!data?.deleted){setError('Could not delete your account. Please try again.');return;}
+    try{for(const prefix of ['calorie-tracker-training-','calorie-tracker-equipment-','calorie-tracker-muscles-','calorie-tracker-goal-'])localStorage.removeItem(prefix+session.user.id);}catch{/* Account is deleted even if local preferences cannot be cleared. */}
+    await supabase!.auth.signOut({scope:'local'});
+    location.reload();
+  }
   useEffect(()=>{if(!toast)return;const timer=setTimeout(()=>setToast(''),3500);return()=>clearTimeout(timer);},[toast]);
   const inNutrition=!trainingPage;
   return <div className="app-shell">
-    <header className="topbar"><Brand/><div className="topbar-actions"><span className="sync">{session?sync:'On this device'}</span><details className="account-menu" ref={menu}><summary aria-label="Open settings and account menu"><span aria-hidden="true">☰</span></summary><div className="menu-panel"><span className="eyebrow">ACCOUNT & MORE</span><p className="account-email">{session?session.user.email:'Guest · saved on this device'}</p><button onClick={()=>{navigate(null);setPage('today');setSelected(null);}}>Today</button><button onClick={()=>navigate('workouts')}>Workouts</button><button onClick={()=>navigate('feed')}>Workout feed</button><button onClick={()=>navigate('weight')}>Body weight</button><button onClick={()=>navigate('prs')}>Personal records</button>{session?<button onClick={async()=>{const {error}=await supabase!.auth.signOut();if(error)setError(error.message);}}>Sign out</button>:<button onClick={()=>{if(trainingEditing&&!window.confirm("Leave workout? Unsaved changes will be lost."))return;onAccount();}}>Sign in or create account</button>}</div></details></div></header>
+    <header className="topbar"><Brand/><div className="topbar-actions"><span className="sync">{session?sync:'On this device'}</span><details className="account-menu" ref={menu}><summary aria-label="Open settings and account menu"><span aria-hidden="true">☰</span></summary><div className="menu-panel"><span className="eyebrow">ACCOUNT & MORE</span><p className="account-email">{session?session.user.email:'Guest · saved on this device'}</p><button onClick={()=>{navigate(null);setPage('today');setSelected(null);}}>Today</button><button onClick={()=>navigate('workouts')}>Workouts</button><button onClick={()=>navigate('feed')}>Workout feed</button><button onClick={()=>navigate('weight')}>Body weight</button><button onClick={()=>navigate('prs')}>Personal records</button>{session?<><button onClick={async()=>{const {error}=await supabase!.auth.signOut();if(error)setError(error.message);}}>Sign out</button><button className="delete-account" onClick={()=>void deleteAccount()}>Delete account</button></>:<button onClick={()=>{if(trainingEditing&&!window.confirm("Leave workout? Unsaved changes will be lost."))return;onAccount();}}>Sign in or create account</button>}<a className="menu-link" href="https://noelperland.github.io/calorie-tracker/privacy.html" target="_blank" rel="noreferrer">Privacy</a></div></details></div></header>
     <main className="dashboard">
       {trainingPage?<Training key={session?.user.id ?? 'guest'} page={trainingPage} session={session} onEditingChange={setTrainingEditing}/>:<>
         <nav className="tabs" aria-label="Nutrition navigation"><button aria-current={page==='today'?'page':undefined} onClick={()=>{setPage('today');setSelected(null);}}>Today</button><button aria-current={page==='history'?'page':undefined} onClick={()=>{setPage('history');setSelected(null);}}>History</button></nav>
