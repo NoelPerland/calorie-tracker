@@ -18,4 +18,17 @@ jobs:
           VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
           VITE_SPOTIFY_CLIENT_ID: ${{ vars.VITE_SPOTIFY_CLIENT_ID }}
       - name: Compile unsigned simulator app
-        run: xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build
+        run: xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath "$RUNNER_TEMP/CalorieBuild" CODE_SIGNING_ALLOWED=NO build
+      - name: Launch on iPhone simulator
+        run: |
+          device=$(xcrun simctl list devices available -j | python3 -c 'import json,sys; devices=json.load(sys.stdin)["devices"]; print(next(d["udid"] for group in devices.values() for d in group if "iPhone" in d["name"]))')
+          xcrun simctl boot "$device"
+          xcrun simctl bootstatus "$device" -b
+          xcrun simctl install "$device" "$RUNNER_TEMP/CalorieBuild/Build/Products/Debug-iphonesimulator/App.app"
+          xcrun simctl launch "$device" com.noelperland.calorietracker
+          sleep 5
+          xcrun simctl io "$device" screenshot "$RUNNER_TEMP/calorie-iphone.png"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: calorie-iphone-smoke
+          path: ${{ runner.temp }}/calorie-iphone.png
