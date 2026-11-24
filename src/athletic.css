@@ -250,8 +250,10 @@ input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:1px}
 .daily-energy strong{color:var(--ink);font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-size:43px;font-weight:600;line-height:1}
 .daily-energy small{font-family:"DM Sans",sans-serif;font-size:13px;font-weight:500}
 .nutrition-details{position:relative;color:var(--accent)}
-.nutrition-details summary{min-height:44px;padding:12px 0;font-size:13px;font-weight:700;cursor:pointer}
-.nutrition-details summary span{margin-left:8px}
+.nutrition-details summary{min-height:44px;padding:12px 0;list-style:none;font-size:13px;font-weight:700;cursor:pointer}
+.nutrition-details summary::-webkit-details-marker{display:none}
+.nutrition-details summary span{display:inline-block;margin-left:8px;transition:transform .18s}
+.nutrition-details[open] summary span{transform:rotate(45deg)}
 .nutrition-details .macro-values{position:absolute;right:0;top:44px;z-index:5;min-width:280px;padding:18px;border:1px solid var(--line);border-radius:13px;background:var(--surface);box-shadow:0 14px 40px #10231b22}
 .nutrition-details .macro-values strong{font-size:30px}
 .workout-shortcuts{margin-top:22px;padding:25px;border:1px solid var(--line);border-radius:20px;background:var(--surface)}
